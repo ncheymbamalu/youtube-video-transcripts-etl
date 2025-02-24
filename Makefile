@@ -19,5 +19,5 @@ push:
 	uv run dvc add ./data
 	git add data.dvc
 	git commit -m "updating ./data locally and pushing to remote"
-	uv run dvc dvc push
+	uv run dvc push
 	rm -rf ./data
