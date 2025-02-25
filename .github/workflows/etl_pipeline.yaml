@@ -50,13 +50,7 @@ jobs:
           gdrive_service_account_json_file_path
           gdrive_credentials.json
 
-      - name: Pull data
-        run: make pull
-
-      - name: Process data
+      - name: Execute pipeline
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-        run: make etl
-
-      - name: Push data
-        run: make push
+        run: make
