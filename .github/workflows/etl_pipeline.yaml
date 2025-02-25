@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Set up DVC
+      - name: Install DVC
         uses: iterative/setup-dvc@v1
 
       - name: Create gdrive credentials

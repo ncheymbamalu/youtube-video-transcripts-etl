@@ -67,17 +67,16 @@ def process_videos(
                             if transcript_dict.get("text")
                         ),
                     }
-                except Exception as e: # modified
+                except Exception:
                     logger.info(
                         f"Transcript unavailable. '{item.get('snippet').get('title')}' will be \
 removed."
                     )
-                    print(e) # modified
                     record = {
                         "video_id": item.get("id").get("videoId"),
                         "creation_date": item.get("snippet").get("publishedAt"),
                         "title": item.get("snippet").get("title").strip(),
-                        "transcript": None,
+                        "transcript": pl.lit("not available"),
                     }
                 records.append(record)
             incorrect_strings: list[str] = ["&#39;", "&quot;", "&amp;", "  "]
