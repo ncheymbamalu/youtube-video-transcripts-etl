@@ -21,7 +21,7 @@ load_dotenv(Paths.ENV)
 def process_videos(
     youtube_channel_id: str,
     max_results: int = params_config.max_results
-) -> pl.LazyFrame:
+) -> pl.DataFrame:
     """Returns a pl.DataFrame that contains the ID, creation date, title, and transcript
     for a YouTube channel's videos.
 
@@ -34,7 +34,7 @@ def process_videos(
         Defaults to params_config.max_results.
 
     Returns:
-        pl.LazyFrame: Dataset containing the ID, creation date, title, and transcript
+        pl.DataFrame: Dataset containing the ID, creation date, title, and transcript
         for a YouTube channel's videos.
     """
     try:
@@ -67,7 +67,8 @@ def process_videos(
                             if transcript_dict.get("text")
                         ),
                     }
-                except Exception:
+                except Exception as e:
+                    print(e)
                     logger.info(
                         f"Transcript unavailable. '{item.get('snippet').get('title')}' will be \
 removed."
@@ -82,18 +83,18 @@ removed."
             incorrect_strings: list[str] = ["&#39;", "&quot;", "&amp;", "  "]
             correct_strings: list[str] = ["'", "'", "&", " "]
             return (
-                pl.LazyFrame(records)
+                pl.DataFrame(records)
                 .with_columns(
-                    pl.col("creation_date").str.to_datetime(),
+                    pl.col("creation_date").str.to_datetime().dt.replace_time_zone(None),
                     pl.col("title").str.replace_many(incorrect_strings, correct_strings),
                     pl.col("transcript").str.replace_many(incorrect_strings, correct_strings),
                 )
-                .drop_nulls(subset="transcript")
+                .filter(pl.col("transcript").ne("not available"))
             )
         logger.info(
             f"Invalid request. Unable to access videos from the YouTube channel ID, \
 '{youtube_channel_id}'."
         )
-        return pl.LazyFrame(schema=["video_id", "creation_date", "title", "transcript"])
+        return pl.DataFrame(schema=["video_id", "creation_date", "title", "transcript"])
     except Exception as e:
         raise e

@@ -34,22 +34,23 @@ def main(youtube_channel_ids: ListConfig | list[str]) -> None:
 
         # iterate over each YouTube channel and create a pl.LazyFrame that contains
         # the ID, creation date, title, and transcript of its 50 most recent videos
-        lazyframes: list[pl.LazyFrame] = Parallel(n_jobs=-1)(
-            delayed(process_videos)(youtube_channel_id)
-            for youtube_channel_id in tqdm(youtube_channel_ids)
-        )
+        # lazyframes: list[pl.LazyFrame] = Parallel(n_jobs=-1)(
+        #     delayed(process_videos)(youtube_channel_id)
+        #     for youtube_channel_id in tqdm(youtube_channel_ids)
+        # )
+        dfs: list[pl.DataFrame] = [
+            process_videos(youtube_channel_id)
+            for youtube_channel_id in random.sample(youtube_channel_ids, k=3)
+        ]
 
         # vertically concatenate the pl.LazyFrames in the 'lazyframes' list, and ...
         # only keep records that have not been processed and whose transcript is available
         data: pl.DataFrame = (
-            pl.concat(lazyframes, how="vertical")
+            pl.concat(dfs, how="vertical")
             .unique(subset="video_id", keep="first")
-            .with_columns(pl.col("creation_date").dt.replace_time_zone(None))
-            .filter(
-                ~pl.col("video_id").is_in(processed_video_ids)
-                & pl.col("transcript").ne("not available")
-            )
-            .collect()
+            # .with_columns(pl.col("creation_date").dt.replace_time_zone(None))
+            .filter(~pl.col("video_id").is_in(processed_video_ids))
+            # .collect()
         )
 
         # update the processed data
