@@ -1,0 +1,53 @@
+name: etl-pipeline
+
+on:
+  schedule:
+    - cron: '0 16 * * *' # pipeline will run every day at 4pm; https://crontab.guru/#0_16_*_*_*
+
+  # allows the pipeline to be executed manually from GitHub
+  workflow_dispatch:
+
+jobs:
+
+  etl_pipeline:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+      id-token: write
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Create gdrive credentials
+        env:
+          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
+        run: |
+          echo $GDRIVE_CREDENTIALS_DATA > gdrive_credentials.json
+
+      - name: Configure DVC remote
+        run: >
+          uv run dvc remote modify gdrive --local
+          gdrive_service_account_json_file_path
+          gdrive_credentials.json
+
+      - name: Execute pipeline
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: make
