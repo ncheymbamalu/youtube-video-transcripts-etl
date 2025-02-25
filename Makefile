@@ -15,16 +15,16 @@ clean:
 	rm -rf logs
 
 pull:
-	uv run dvc pull
+	dvc pull
 
 etl:
 	uv run python src/etl.py 
 
 push:
-	uv run dvc add ./data
+	dvc add ./data
 	git config user.name "github-actions"; git config user.email "github-actions@github.com"
 	git add data.dvc
-	git commit -m "updating ./data locally and pushing to remote"; uv run dvc push
+	git commit -m "updating ./data locally and pushing to remote"; dvc push
 	git push
 	rm -rf data
 
