@@ -28,4 +28,4 @@ push:
 	git push
 	rm -rf data
 
-runner: pull push clean
+runner: pull etl push clean

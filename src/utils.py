@@ -67,11 +67,12 @@ def process_videos(
                             if transcript_dict.get("text")
                         ),
                     }
-                except Exception:
+                except Exception as e: # modified
                     logger.info(
                         f"Transcript unavailable. '{item.get('snippet').get('title')}' will be \
 removed."
                     )
+                    print(e) # modified
                     record = {
                         "video_id": item.get("id").get("videoId"),
                         "creation_date": item.get("snippet").get("publishedAt"),
