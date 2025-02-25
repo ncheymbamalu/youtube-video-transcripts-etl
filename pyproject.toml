@@ -7,11 +7,19 @@ requires-python = "==3.10.14"
 readme = "README.md"
 dependencies = [
     "ipykernel>=6.29.5,<7",
+    "joblib>=1.4.2",
     "jupyter>=1.0.0,<2",
     "loguru>=0.7.2,<0.8",
     "notebook>=7.3.2",
-    "omegaconf==2.3.0",
+    "numpy>=2.2.3",
+    "omegaconf>=2.3.0",
+    "pandas>=2.2.3",
+    "polars>=1.23.0",
+    "pyarrow>=19.0.1",
     "python-dotenv>=1.0.1,<2",
+    "requests>=2.32.3",
+    "tqdm>=4.67.1",
+    "youtube-transcript-api>=0.6.3",
 ]
 
 [dependency-groups]
