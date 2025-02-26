@@ -18,7 +18,7 @@ from src.logger import logger
 load_dotenv(Paths.ENV)
 
 
-def process_videos(
+def transcribe_videos(
     youtube_channel_id: str,
     max_results: int = params_config.max_results
 ) -> pl.DataFrame:
@@ -29,8 +29,8 @@ def process_videos(
     shows how to find the YouTube channel ID for a given YouTube channel.
 
     Args:
-        youtube_channel_id (str): ID of the YouTube channel whose videos will be processed.
-        max_results (int, optional): Maximum number of YouTube videos that will be processed.
+        youtube_channel_id (str): ID of the YouTube channel whose videos will be transcribed.
+        max_results (int, optional): Maximum number of YouTube videos that will be transcribed.
         Defaults to params_config.max_results.
 
     Returns:

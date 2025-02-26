@@ -1,5 +1,5 @@
-.PHONE: install check clean pull etl push
-.DEFAULT_GOAL:=runner
+.PHONE: install check clean pull process push etl
+.DEFAULT_GOAL:=etl
 
 install: pyproject.toml
 	uv venv; source .venv/bin/activate
@@ -17,8 +17,8 @@ clean:
 pull:
 	dvc pull
 
-etl:
-	uv run python src/etl.py
+process:
+	uv run python src/process.py
 
 push:
 	dvc add ./data
@@ -27,4 +27,4 @@ push:
 	git push
 	rm -rf data
 
-runner: pull etl push clean
+etl: pull process push clean
